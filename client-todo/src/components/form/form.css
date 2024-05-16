@@ -1,0 +1,63 @@
+.input_button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 70px;
+}
+
+form input,
+input::placeholder {
+  border: none;
+  font-family: Inter, sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: -0.30000001192092896px;
+  text-align: left;
+  color: #323749;
+  height: 48px;
+  width: 450px;
+}
+
+input:focus {
+  outline: none;
+}
+
+.divider {
+  background: #dedfe5;
+  box-shadow: 0px 1px 2px 0px #dedfe5;
+  height: 2px;
+  width: 700px;
+}
+
+.button_container {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.add_button {
+  width: 80px;
+  height: 36px;
+  background: #00ae1c;
+  box-shadow: 0px 1px 2px 0px #1018280d;
+  border: none;
+  border-radius: 8px;
+  font-family: Roboto, sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: -0.30000001192092896px;
+  text-align: right;
+  padding-right: 14px;
+  color: #ffffff;
+  cursor: pointer;
+}
+
+.icon-plus {
+  position: relative;
+  right: -30px;
+  background: url("./imgs/Icon.png");
+  width: 16px;
+  height: 16px;
+}

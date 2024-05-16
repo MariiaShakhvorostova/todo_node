@@ -1,0 +1,25 @@
+.clear_button {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  background: #ffffff;
+  width: 300px;
+  height: 36px;
+  border: 1px solid #dedfe5;
+  border-radius: 8px;
+  font-family: Roboto, sans-serif;
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 20px;
+  letter-spacing: -0.30000001192092896px;
+  text-align: right;
+  margin: 40px 200px;
+  cursor: pointer;
+}
+
+.clear_icon {
+  background: url("./imgs/delete.png");
+  width: 16px;
+  height: 16px;
+}
