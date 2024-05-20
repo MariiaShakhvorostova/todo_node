@@ -1,11 +1,15 @@
 import express from "express";
 import bodyParser from "body-parser";
 import mongoose from "mongoose";
+import { config } from "dotenv";
 import { TodoService } from "./services/todo-serv.mjs";
 const app = express();
-const PORT = 3010;
+
+config();
 
 app.use(bodyParser.json());
+
+const PORT = process.env.PORT || 3010;
 
 const todoService = new TodoService();
 
@@ -78,9 +82,7 @@ app.delete("/todos", async (req, res) => {
 });
 
 mongoose
-  .connect(
-    "mongodb+srv://ShakhvorostovaMariia:1504@clusterms.mal6x2g.mongodb.net/New_Todos"
-  )
+  .connect(process.env.MONGODB_URI)
   .then(() => {
     console.log("Connected to MongoDB");
     app.listen(PORT, () => {
