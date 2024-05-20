@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import axios from "axios";
 import "./form.css";
 
 function AddTodoForm({ onAdd }) {
@@ -8,15 +7,8 @@ function AddTodoForm({ onAdd }) {
   const handleSubmit = async (e) => {
     e.preventDefault();
     if (!title.trim()) return;
-    try {
-      const response = await axios.post("http://localhost:3010/todos", {
-        title,
-      });
-      onAdd(response.data);
-      setTitle("");
-    } catch (error) {
-      console.error("Error adding todo:", error);
-    }
+    onAdd(title);
+    setTitle("");
   };
 
   return (

@@ -1,62 +1,93 @@
-import React, { useState, useEffect } from "react";
+import React from "react";
+import {
+  QueryClient,
+  QueryClientProvider,
+  useQuery,
+  useMutation,
+} from "react-query";
 import axios from "axios";
 import AddTodoForm from "./src/components/form/AddTodoForm";
 import TodoItem from "./src/components/to-do-item/TodoItem";
 import ClearButton from "./src/components/clear-button/clear_button";
 import "./App.css";
 
+const queryClient = new QueryClient();
+
+const fetchTodos = async () => {
+  const response = await axios.get("http://localhost:3010/todos");
+  return response.data;
+};
+
+const addTodo = async (newTodoTitle) => {
+  const response = await axios.post("http://localhost:3010/todos", {
+    title: newTodoTitle,
+  });
+  return response.data;
+};
+
+const deleteTodo = async (id) => {
+  await axios.delete(`http://localhost:3010/todos/${id}`);
+};
+
+const clearTodos = async () => {
+  await axios.delete("http://localhost:3010/todos");
+};
+
 function App() {
-  const [todos, setTodos] = useState([]);
+  const { data: todos = [] } = useQuery("todos", fetchTodos);
+  const addTodoMutation = useMutation(addTodo, {
+    onSuccess: () => {
+      queryClient.invalidateQueries("todos");
+    },
+  });
+  const deleteTodoMutation = useMutation(deleteTodo, {
+    onSuccess: () => {
+      queryClient.invalidateQueries("todos");
+    },
+  });
+  const clearTodosMutation = useMutation(clearTodos, {
+    onSuccess: () => {
+      queryClient.invalidateQueries("todos");
+    },
+  });
 
-  useEffect(() => {
-    fetchTodos();
-  }, []);
-
-  const fetchTodos = async () => {
-    try {
-      const response = await axios.get("http://localhost:3010/todos");
-      setTodos(response.data || []);
-    } catch (error) {
-      console.error("Error fetching todos:", error);
-    }
+  const handleAddTodo = async (newTodoTitle) => {
+    await addTodoMutation.mutateAsync(newTodoTitle);
   };
 
-  const addTodo = (newTodo) => {
-    setTodos((prevTodos) => [...prevTodos, newTodo]);
+  const handleDeleteTodo = async (id) => {
+    await deleteTodoMutation.mutateAsync(id);
   };
 
-  const deleteTodo = async (id) => {
-    try {
-      await axios.delete(`http://localhost:3010/todos/${id}`);
-      setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
-    } catch (error) {
-      console.error("Error deleting todo:", error);
-    }
-  };
-
-  const clearTodos = async () => {
-    try {
-      await axios.delete("http://localhost:3010/todos");
-      setTodos([]);
-    } catch (error) {
-      console.error("Error clearing todos:", error);
-    }
+  const handleClearTodos = async () => {
+    await clearTodosMutation.mutateAsync();
   };
 
   return (
     <div className="main">
       <div className="to-do-app">
-        <AddTodoForm onAdd={addTodo} />
+        <AddTodoForm onAdd={handleAddTodo} />
         <div className="all_items_on_page">
-          {Array.isArray(todos) &&
-            todos.map((todo) => (
-              <TodoItem key={todo.id} todo={todo} onDelete={deleteTodo} />
-            ))}
+          {todos.map((todo) => (
+            <TodoItem
+              key={todo.id}
+              todo={todo}
+              onDelete={() => handleDeleteTodo(todo.id)}
+            />
+          ))}
         </div>
       </div>
-      <ClearButton onClear={clearTodos} />
+      <ClearButton onClear={handleClearTodos} />
     </div>
   );
 }
 
-export default App;
+function AppWrapper() {
+  return (
+    <QueryClientProvider client={queryClient}>
+      <App />
+    </QueryClientProvider>
+  );
+}
+
+export default AppWrapper;

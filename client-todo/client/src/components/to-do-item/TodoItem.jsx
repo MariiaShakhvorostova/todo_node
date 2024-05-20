@@ -37,9 +37,9 @@ function TodoItem({ todo, onDelete }) {
   const handleEditComplete = async () => {
     setIsEditing(false);
     setIsHovered(true);
-    document.querySelector(".delete_item").style.background =
+    document.querySelector(`#delete_item_${todo.id}`).style.background =
       'url("./imgs/delete.png") no-repeat';
-    document.querySelector(".edit_item").style.background =
+    document.querySelector(`#edit_item_${todo.id}`).style.background =
       'url("./imgs/edit.png") no-repeat';
     try {
       await axios.put(`http://localhost:3010/todos/${todo.id}`, {
@@ -56,15 +56,17 @@ function TodoItem({ todo, onDelete }) {
 
   const handleEditItem = () => {
     setIsEditing(true);
-    document.querySelector(".single_item").style.background = "#ffffff";
-    document.querySelector(".delete_item").style.background = "none";
-    document.querySelector(".edit_item").style.background =
+    document.querySelector(`#single_item_${todo.id}`).style.background =
+      "#ffffff";
+    document.querySelector(`#delete_item_${todo.id}`).style.background = "none";
+    document.querySelector(`#edit_item_${todo.id}`).style.background =
       'url("./imgs/bird.png") no-repeat';
   };
 
   return (
     <div className="items_container">
       <div
+        id={`single_item_${todo.id}`}
         className={`single_item ${isChecked ? "checked" : ""} ${
           isHovered ? "hovered" : ""
         }`}
@@ -88,10 +90,15 @@ function TodoItem({ todo, onDelete }) {
         </div>
         <div className={`buttons_group ${isChecked ? "hidden" : ""}`}>
           <button
+            id={`edit_item_${todo.id}`}
             className={`edit_item ${isEditVisible ? "" : "hidden"}`}
             onClick={handleEditItem}
           ></button>
-          <button onClick={handleDelete} className="delete_item"></button>
+          <button
+            id={`delete_item_${todo.id}`}
+            onClick={handleDelete}
+            className="delete_item"
+          ></button>
         </div>
       </div>
     </div>
