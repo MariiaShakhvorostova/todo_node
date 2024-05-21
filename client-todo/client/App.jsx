@@ -1,37 +1,16 @@
 import React from "react";
-import {
-  QueryClient,
-  QueryClientProvider,
-  useQuery,
-  useMutation,
-} from "react-query";
-import axios from "axios";
+import { useQuery, useMutation } from "react-query";
 import AddTodoForm from "./src/components/form/AddTodoForm";
 import TodoItem from "./src/components/to-do-item/TodoItem";
 import ClearButton from "./src/components/clear-button/clear_button";
+import {
+  fetchTodos,
+  addTodo,
+  deleteTodo,
+  clearTodos,
+} from "./src/api/todosApi";
+import queryClient from "./src/queryClient";
 import "./App.css";
-
-const queryClient = new QueryClient();
-
-const fetchTodos = async () => {
-  const response = await axios.get("http://localhost:3010/todos");
-  return response.data;
-};
-
-const addTodo = async (newTodoTitle) => {
-  const response = await axios.post("http://localhost:3010/todos", {
-    title: newTodoTitle,
-  });
-  return response.data;
-};
-
-const deleteTodo = async (id) => {
-  await axios.delete(`http://localhost:3010/todos/${id}`);
-};
-
-const clearTodos = async () => {
-  await axios.delete("http://localhost:3010/todos");
-};
 
 function App() {
   const { data: todos = [] } = useQuery("todos", fetchTodos);
@@ -82,12 +61,4 @@ function App() {
   );
 }
 
-function AppWrapper() {
-  return (
-    <QueryClientProvider client={queryClient}>
-      <App />
-    </QueryClientProvider>
-  );
-}
-
-export default AppWrapper;
+export default App;
