@@ -19,3 +19,8 @@ export const deleteTodo = async (id) => {
 export const clearTodos = async () => {
   await axios.delete(API_URL);
 };
+
+export const editTodo = async (id, updatedTodo) => {
+  const response = await axios.put(`${API_URL}/${id}`, updatedTodo);
+  return response.data;
+};

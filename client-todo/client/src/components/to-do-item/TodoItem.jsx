@@ -4,7 +4,7 @@ import axios from "axios";
 
 import "./item.css";
 
-function TodoItem({ todo, onDelete }) {
+function TodoItem({ todo, onDelete, onEdit }) {
   const [isChecked, setIsChecked] = useState(todo.completed);
   const [isHovered, setIsHovered] = useState(false);
   const [isEditVisible, setIsEditVisible] = useState(!todo.completed);
@@ -20,6 +20,7 @@ function TodoItem({ todo, onDelete }) {
       await axios.put(`http://localhost:3010/todos/${todo.id}`, {
         completed: newChecked,
       });
+      await onEdit(todo.id, { completed: newChecked });
     } catch (error) {
       console.error("Error updating todo:", error);
     }
@@ -45,6 +46,7 @@ function TodoItem({ todo, onDelete }) {
       await axios.put(`http://localhost:3010/todos/${todo.id}`, {
         title: todoText,
       });
+      await onEdit(todo.id, { title: todoText });
     } catch (error) {
       console.error("Error updating todo:", error);
     }
