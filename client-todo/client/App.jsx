@@ -8,7 +8,6 @@ import {
   addTodo,
   deleteTodo,
   clearTodos,
-  editTodo,
 } from "./src/api/todosApi";
 import queryClient from "./src/queryClient";
 import "./App.css";
@@ -31,15 +30,6 @@ function App() {
     },
   });
 
-  const editTodoMutation = useMutation(
-    ({ id, updatedTodo }) => editTodo(id, updatedTodo),
-    {
-      onSuccess: () => {
-        queryClient.invalidateQueries("todos");
-      },
-    }
-  );
-
   const handleAddTodo = async (newTodoTitle) => {
     await addTodoMutation.mutateAsync(newTodoTitle);
   };
@@ -52,10 +42,6 @@ function App() {
     await clearTodosMutation.mutateAsync();
   };
 
-  const handleEditTodo = async (id, updatedTodo) => {
-    await editTodoMutation.mutateAsync({ id, updatedTodo });
-  };
-
   return (
     <div className="main">
       <div className="to-do-app">
@@ -66,7 +52,6 @@ function App() {
               key={todo.id}
               todo={todo}
               onDelete={() => handleDeleteTodo(todo.id)}
-              onEdit={handleEditTodo}
             />
           ))}
         </div>

@@ -13,6 +13,7 @@ export class TodoRepo {
       const todos = await TodoModel.find();
       return todos;
     } catch (error) {
+      console.error(error);
       throw new Error("Internal error while fetching all todos");
     }
   }
@@ -24,6 +25,7 @@ export class TodoRepo {
       });
       return todo.toObject();
     } catch (error) {
+      console.error(error);
       throw new Error("Internal error while updating");
     }
   }
@@ -32,6 +34,7 @@ export class TodoRepo {
     try {
       await TodoModel.deleteOne({ id: id });
     } catch (error) {
+      console.error(error);
       throw new Error("Internal error while deleting");
     }
   }

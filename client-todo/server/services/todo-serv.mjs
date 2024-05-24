@@ -22,6 +22,7 @@ export class TodoService {
       const updatedTodo = await this.todoRepo.updateTodo(id, updateFields);
       return updatedTodo;
     } catch (error) {
+      console.error("Error in updateTodo:", error);
       throw new Error("Internal error while updating");
     }
   }
@@ -31,6 +32,7 @@ export class TodoService {
       await this.todoRepo.deleteTodo(id);
       return {};
     } catch (error) {
+      console.error("Error in deleteTodo:", error);
       return { error: "Internal error while deleting" };
     }
   }

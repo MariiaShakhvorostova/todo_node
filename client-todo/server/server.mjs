@@ -4,6 +4,7 @@ import mongoose from "mongoose";
 import { config } from "dotenv";
 import { TodoService } from "./services/todo-serv.mjs";
 const app = express();
+import process from "process";
 
 config();
 
@@ -67,6 +68,7 @@ app.delete("/todos/:id", async (req, res) => {
     await todoService.deleteTodo(id);
     res.end();
   } catch (error) {
+    console.error("Error deleting all todos:", error);
     res.json({ error: "Internal error occurred while deleting todo" });
   }
 });
