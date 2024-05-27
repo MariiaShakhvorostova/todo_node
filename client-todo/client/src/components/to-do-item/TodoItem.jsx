@@ -13,6 +13,7 @@ function TodoItem({ todo, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
   const [todoText, setTodoText] = useState(todo.title);
   const queryClient = useQueryClient();
+
   const deleteTodoMutation = useMutation(deleteTodo, {
     onSuccess: () => {
       queryClient.setQueryData("todos", (prev) =>
@@ -21,18 +22,26 @@ function TodoItem({ todo, onDelete }) {
     },
   });
 
+  const editTodoMutation = useMutation(
+    (updatedTodo) => editTodo(todo.id, updatedTodo),
+    {
+      onSuccess: (updatedTodo) => {
+        queryClient.setQueryData("todos", (prev) =>
+          prev.map((t) => (t.id === updatedTodo.id ? updatedTodo : t))
+        );
+      },
+    }
+  );
+
   const handleCheckboxChange = async (e) => {
     const newChecked = e.target.checked;
     setIsChecked(newChecked);
     setIsEditVisible(!newChecked);
 
     try {
-      await editTodo(todo.id, { completed: newChecked });
-      queryClient.setQueryData("todos", (prev) =>
-        prev.map((t) =>
-          t.id === todo.id ? { ...t, completed: newChecked } : t
-        )
-      );
+      await editTodoMutation.mutateAsync({
+        completed: newChecked,
+      });
     } catch (error) {
       console.error("Error updating todo:", error);
     }
@@ -50,10 +59,7 @@ function TodoItem({ todo, onDelete }) {
   const handleEditComplete = async () => {
     setIsEditing(false);
     try {
-      await editTodo(todo.id, { title: todoText });
-      queryClient.setQueryData("todos", (prev) =>
-        prev.map((t) => (t.id === todo.id ? { ...t, title: todoText } : t))
-      );
+      await editTodoMutation.mutateAsync({ title: todoText });
     } catch (error) {
       console.error("Error updating todo:", error);
     }
