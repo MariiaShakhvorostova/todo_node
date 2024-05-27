@@ -13,20 +13,28 @@ import queryClient from "./src/queryClient";
 import "./App.css";
 
 function App() {
-  const { data: todos = [] } = useQuery("todos", fetchTodos);
+  const { data: todos = [] } = useQuery("todos", fetchTodos, {
+    initialData: undefined,
+    staleTime: Infinity,
+  });
+
   const addTodoMutation = useMutation(addTodo, {
-    onSuccess: () => {
-      queryClient.invalidateQueries("todos");
+    onSuccess: (data) => {
+      queryClient.setQueryData("todos", (prev) => [...prev, data]);
     },
   });
+
   const deleteTodoMutation = useMutation(deleteTodo, {
-    onSuccess: () => {
-      queryClient.invalidateQueries("todos");
+    onSuccess: (id) => {
+      queryClient.setQueryData("todos", (prev) =>
+        prev.filter((todo) => todo.id !== id)
+      );
     },
   });
+
   const clearTodosMutation = useMutation(clearTodos, {
     onSuccess: () => {
-      queryClient.invalidateQueries("todos");
+      queryClient.setQueryData("todos", []);
     },
   });
 
@@ -60,5 +68,4 @@ function App() {
     </div>
   );
 }
-
 export default App;

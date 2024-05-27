@@ -1,7 +1,7 @@
 /* eslint-disable react/prop-types */
 import React, { useState } from "react";
 import Checkbox from "../checkbox/checkbox";
-import { useMutation } from "react-query";
+import { useMutation, useQueryClient } from "react-query";
 import { deleteTodo, editTodo } from "../../api/todosApi";
 
 import "./item.css";
@@ -12,7 +12,14 @@ function TodoItem({ todo, onDelete }) {
   const [isEditVisible, setIsEditVisible] = useState(!todo.completed);
   const [isEditing, setIsEditing] = useState(false);
   const [todoText, setTodoText] = useState(todo.title);
-  const deleteTodoMutation = useMutation(deleteTodo);
+  const queryClient = useQueryClient();
+  const deleteTodoMutation = useMutation(deleteTodo, {
+    onSuccess: () => {
+      queryClient.setQueryData("todos", (prev) =>
+        prev.filter((t) => t.id !== todo.id)
+      );
+    },
+  });
 
   const handleCheckboxChange = async (e) => {
     const newChecked = e.target.checked;
@@ -21,6 +28,11 @@ function TodoItem({ todo, onDelete }) {
 
     try {
       await editTodo(todo.id, { completed: newChecked });
+      queryClient.setQueryData("todos", (prev) =>
+        prev.map((t) =>
+          t.id === todo.id ? { ...t, completed: newChecked } : t
+        )
+      );
     } catch (error) {
       console.error("Error updating todo:", error);
     }
@@ -39,6 +51,9 @@ function TodoItem({ todo, onDelete }) {
     setIsEditing(false);
     try {
       await editTodo(todo.id, { title: todoText });
+      queryClient.setQueryData("todos", (prev) =>
+        prev.map((t) => (t.id === todo.id ? { ...t, title: todoText } : t))
+      );
     } catch (error) {
       console.error("Error updating todo:", error);
     }
